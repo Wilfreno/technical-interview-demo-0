@@ -2,6 +2,7 @@ export type ToDoType = {
   id: number;
   content: string;
 };
+
 const todo_list: string[] = [];
 
 export class Todo {
