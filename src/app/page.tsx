@@ -1,55 +1,25 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { useState } from "react";
 import TodoItem from "../components/TodoItem";
-import JSONResponse from "@/lib/json-response";
+import { useTodo } from "@/components/providers/TodoListProvider";
 
 export default function Home() {
-  const [list, setList] = useState<string[]>([]);
   const [new_item, setNewItem] = useState("");
 
-  async function createItem(event: FormEvent<HTMLFormElement>) {
-    try {
-      event.preventDefault();
-
-      const response = await fetch("/api/todo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content: new_item }),
-      });
-      const { data, status, message } = (await response.json()) as ReturnType<typeof JSONResponse<string[]>>;
-
-      if (status !== "CREATED") throw new Error(message!);
-
-      setList(data!);
-      setNewItem("");
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    async function getList() {
-      try {
-        const response = await fetch("/api/todo");
-        const { data, status, message } = (await response.json()) as ReturnType<typeof JSONResponse<string[]>>;
-
-        if (status !== "OK") throw new Error(message!);
-
-        setList(data!);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    getList();
-  }, []);
+  const { list, createItem } = useTodo();
 
   return (
     <main className="flex flex-col items-center gap-10 p-10 h-dvh">
       <h1 className="text-5xl font-semibold">Todo App</h1>
-      <form className="flex flex-col items-center w-1/3 gap-10" onSubmit={createItem}>
+      <form
+        className="flex flex-col items-center w-1/3 gap-10"
+        onSubmit={async (event) => {
+          event.preventDefault();
+          await createItem(new_item);
+          setNewItem("");
+        }}
+      >
         <div className="w-full flex justify-center gap-4">
           <input
             placeholder="Input todo"
@@ -68,7 +38,7 @@ export default function Home() {
 
         <div className="grid gap-4 w-full max-h-[70dvh] overflow-y-auto p-2">
           {list.map((content, index) => (
-            <TodoItem key={index} content={content} index={index} setList={setList} />
+            <TodoItem key={index} content={content} index={index} />
           ))}
         </div>
       </form>

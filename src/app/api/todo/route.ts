@@ -58,7 +58,8 @@ export async function DELETE(request: Request) {
   try {
     const id = (await request.json()).id;
 
-    if (!id) return NextResponse.json(JSONResponse("BAD_REQUEST", "id field is must exist on the request body "));
+    if (id === undefined)
+      return NextResponse.json(JSONResponse("BAD_REQUEST", "id field is must exist on the request body "));
 
     Todo.delete(id);
     return NextResponse.json(JSONResponse("OK", "todo item deleted", Todo.list), { status: 200 });
