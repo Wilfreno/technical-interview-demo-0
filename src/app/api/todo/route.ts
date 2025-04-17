@@ -34,7 +34,7 @@ export async function PATCH(request: Request) {
   try {
     const { id, content } = (await request.json()) as ToDoType;
 
-    if (!id)
+    if (id === undefined)
       return NextResponse.json(JSONResponse("BAD_REQUEST", "id field is required on the request body"), {
         status: 400,
       });
