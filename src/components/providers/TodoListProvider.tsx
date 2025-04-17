@@ -80,7 +80,6 @@ export default function TodoListProvider({ children }: { children: ReactNode }) 
 
       if (status !== "OK") throw new Error(message!);
 
-      console.log(data);
       setList(data!);
     } catch (error) {
       console.error(error);

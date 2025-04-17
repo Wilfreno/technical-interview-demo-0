@@ -14,7 +14,6 @@ export async function POST(request: Request) {
     const new_todo = new Todo(content);
 
     new_todo.save();
-    console.log(Todo.list);
     return NextResponse.json(JSONResponse("CREATED", "new todo has been created", Todo.list), { status: 201 });
   } catch (error) {
     console.error(error);
